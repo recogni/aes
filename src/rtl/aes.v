@@ -55,29 +55,29 @@ module aes(
   // Internal constant and parameter definitions.
   //----------------------------------------------------------------
   localparam ADDR_NAME0       = 8'h00;
-  localparam ADDR_NAME1       = 8'h01;
-  localparam ADDR_VERSION     = 8'h02;
+  localparam ADDR_NAME1       = 8'h08;
+  localparam ADDR_VERSION     = 8'h10;
 
-  localparam ADDR_CTRL        = 8'h08;
+  localparam ADDR_CTRL        = 8'h18;
   localparam CTRL_INIT_BIT    = 0;
   localparam CTRL_NEXT_BIT    = 1;
 
-  localparam ADDR_STATUS      = 8'h09;
+  localparam ADDR_STATUS      = 8'h20;
   localparam STATUS_READY_BIT = 0;
   localparam STATUS_VALID_BIT = 1;
 
-  localparam ADDR_CONFIG      = 8'h0a;
+  localparam ADDR_CONFIG      = 8'h28;
   localparam CTRL_ENCDEC_BIT  = 0;
   localparam CTRL_KEYLEN_BIT  = 1;
 
-  localparam ADDR_KEY0        = 8'h10;
-  localparam ADDR_KEY7        = 8'h17;
+  localparam ADDR_KEY0        = 8'h30;
+  localparam ADDR_KEY7        = 8'h4C;
 
-  localparam ADDR_BLOCK0      = 8'h20;
-  localparam ADDR_BLOCK3      = 8'h23;
+  localparam ADDR_BLOCK0      = 8'h50;
+  localparam ADDR_BLOCK3      = 8'h5C;
 
-  localparam ADDR_RESULT0     = 8'h30;
-  localparam ADDR_RESULT3     = 8'h33;
+  localparam ADDR_RESULT0     = 8'h60;
+  localparam ADDR_RESULT3     = 8'h6C;
 
   localparam CORE_NAME0       = 32'h61657320; // "aes "
   localparam CORE_NAME1       = 32'h20202020; // "    "
@@ -203,10 +203,10 @@ module aes(
             end
 
           if (key_we)
-            key_reg[address[2 : 0]] <= write_data;
+            key_reg[{address[6], address[3:2]}] <= write_data;
 
           if (block_we)
-            block_reg[address[1 : 0]] <= write_data;
+            block_reg[address[3:2]] <= write_data;
         end
     end // reg_update
 
@@ -260,7 +260,7 @@ module aes(
               endcase // case (address)
 
               if ((address >= ADDR_RESULT0) && (address <= ADDR_RESULT3))
-                tmp_read_data = result_reg[(3 - (address - ADDR_RESULT0)) * 32 +: 32];
+                tmp_read_data = result_reg[(3 - address[3:2]) * 32 +: 32];
             end
         end
     end // addr_decoder
